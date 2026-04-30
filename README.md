@@ -1,0 +1,1 @@
+Il s'agit d'un test à destination de tout manager afin  d'autoévaluer sa pratique de la reconnaissance auprès de ses collaborateur. Ce test s'appuie sur les travaux en psychodynamique de travail et sur les recommandations de l'Agence Nationale pour l'Amélioration des Conditions de Travail.
