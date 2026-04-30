@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Auto-Diagnostic — Reconnaissance Managériale</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F5EDD5;
+    --gold-dark: #8C6D1F;
+    --ink: #1A1A2E;
+    --ink-soft: #3D3D5C;
+    --ink-muted: #7A7A9A;
+    --cream: #FAF8F3;
+    --white: #FFFFFF;
+    --border: rgba(201,168,76,0.2);
+    --border-strong: rgba(201,168,76,0.5);
+    --green: #2D7D5A;
+    --green-light: #E8F5EE;
+    --amber: #C47A1E;
+    --amber-light: #FEF3DC;
+    --red: #B03A2E;
+    --red-light: #FDECEA;
+    --blue: #1A5E8A;
+    --blue-light: #E8F1FA;
+    --purple: #5B3E8A;
+    --purple-light: #F0ECFA;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  .nav {
+    background: var(--ink);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+  }
+
+  .nav-tab {
+    padding: 16px 24px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    background: none;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-tab:hover { color: var(--gold-light); }
+  .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    background: var(--ink);
+    padding: 72px 40px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 40%, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+
+  .hero-kicker {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 16px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .hero-line {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 20px auto;
+  }
+
+  .hero-sub {
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+    font-weight: 300;
+    position: relative;
+  }
+
+  /* CONTENT */
+  .content {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 32px;
+  }
+
+  /* INTRO CARDS */
+  .intro-lead {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    padding: 28px 36px;
+    border-left: 3px solid var(--gold);
+    background: var(--white);
+    border-radius: 4px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .body-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+  }
+
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .pillar-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .pillar-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .pillar-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .pillar-desc {
+    font-size: 12px;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  .author-block {
+    background: var(--gold-light);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 32px 0;
+  }
+
+  .author-block-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 14px;
+  }
+
+  .author-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .author-list li {
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .author-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    padding: 14px 36px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    margin-top: 32px;
+  }
+
+  .cta-btn:hover {
+    background: var(--gold);
+    color: var(--ink);
+  }
+
+  /* TEST PAGE */
+  .test-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .test-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .test-header p {
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 100px;
+    height: 4px;
+    margin: 24px 0 40px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    background: var(--gold);
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--ink-muted);
+    text-align: right;
+    margin-top: -32px;
+    margin-bottom: 16px;
+  }
+
+  .dimension-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+
+  .q-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    transition: box-shadow 0.2s;
+  }
+
+  .q-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+
+  .q-number {
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  .likert {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .likert-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+
+  .likert-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-strong);
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .likert-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-dark);
+    background: var(--gold-light);
+  }
+
+  .likert-btn.selected {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--gold);
+  }
+
+  .likert-scale-wrap { width: 100%; }
+
+  .submit-area {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .submit-btn {
+    background: var(--ink);
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    padding: 16px 48px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .submit-btn:hover { background: var(--gold); color: var(--ink); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .unanswered-warn {
+    font-size: 13px;
+    color: var(--red);
+    margin-top: 12px;
+    display: none;
+  }
+
+  /* RESULTS PAGE */
+  .results-hidden { display: none; }
+
+  .score-hero {
+    text-align: center;
+    background: var(--ink);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(201,168,76,0.1) 0%, transparent 70%);
+  }
+
+  .score-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    position: relative;
+  }
+
+  .score-max {
+    font-size: 24px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .profile-badge {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 24px;
+    border-radius: 100px;
+    margin: 20px 0 8px;
+    position: relative;
+  }
+
+  .profile-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--white);
+    position: relative;
+  }
+
+  .dim-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  @media (max-width: 600px) { .dim-results { grid-template-columns: 1fr; } }
+
+  .dim-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+
+  .dim-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .dim-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .dim-score-label {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .dim-bar-bg {
+    background: var(--cream);
+    border-radius: 100px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .dim-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.8s ease;
+  }
+
+  .dim-interpretation {
+    font-size: 12px;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  .profile-desc {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin: 32px 0;
+  }
+
+  .profile-desc h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  .profile-desc p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  /* ACTION PAGE */
+  .action-intro {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.75;
+    margin-bottom: 36px;
+  }
+
+  .action-section {
+    margin-bottom: 40px;
+  }
+
+  .action-section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .action-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .action-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .action-num {
+    min-width: 32px;
+    height: 32px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .action-content h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .action-content p {
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  .horizon-chip {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .chip-court { background: var(--green-light); color: var(--green); }
+  .chip-moyen { background: var(--amber-light); color: var(--amber); }
+  .chip-long { background: var(--purple-light); color: var(--purple); }
+
+  /* FOOTER */
+  .footer {
+    background: var(--ink);
+    padding: 32px;
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  .footer p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.8;
+  }
+
+  .footer strong {
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+
+  .footer .gold { color: var(--gold); }
+
+  /* DIM colors */
+  .d1 { background: var(--blue-light); color: var(--blue); }
+  .d2 { background: var(--green-light); color: var(--green); }
+  .d3 { background: var(--amber-light); color: var(--amber); }
+  .d4 { background: var(--purple-light); color: var(--purple); }
+
+  .bar-d1 { background: var(--blue); }
+  .bar-d2 { background: var(--green); }
+  .bar-d3 { background: var(--amber); }
+  .bar-d4 { background: var(--purple); }
+
+  /* Profile colors */
+  .prof-debutant { background: var(--amber-light); color: var(--amber); }
+  .prof-developp { background: var(--blue-light); color: var(--blue); }
+  .prof-confiant { background: var(--green-light); color: var(--green); }
+  .prof-exemplaire { background: var(--gold-light); color: var(--gold-dark); }
+
+  .reset-link {
+    font-size: 13px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 20px;
+    display: inline-block;
+  }
+
+  .reset-link:hover { color: var(--ink); }
+
+  .nav-tab-num {
+    display: inline-block;
+    background: rgba(201,168,76,0.15);
+    color: var(--gold);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    text-align: center;
+    line-height: 20px;
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="showPage('accueil')"><span class="nav-tab-num">1</span>Présentation</button>
+    <button class="nav-tab" onclick="showPage('test')"><span class="nav-tab-num">2</span>Le test</button>
+    <button class="nav-tab" onclick="showPage('resultats')"><span class="nav-tab-num">3</span>Résultats</button>
+    <button class="nav-tab" onclick="showPage('actions')"><span class="nav-tab-num">4</span>Plan d'action</button>
+  </div>
+</nav>
+
+<!-- PAGE 1 : ACCUEIL -->
+<div id="page-accueil" class="page active">
+  <div class="hero">
+    <p class="hero-kicker">Auto-diagnostic managérial</p>
+    <h1>La reconnaissance au travail</h1>
+    <div class="hero-line"></div>
+    <p class="hero-sub">Outil d'auto-évaluation fondé sur la psychodynamique du travail et la prévention des risques psychosociaux</p>
+  </div>
+
+  <div class="content">
+    <p class="intro-lead">
+      "Le travail ne peut pas être réduit à l'exécution d'une tâche. Il est aussi recherche de sens, d'identité, et de reconnaissance."<br>
+      <span style="font-size:15px; font-style:normal; color: var(--gold-dark);">— Christophe Dejours</span>
+    </p>
+
+    <h2 class="section-title">Pourquoi la reconnaissance au travail est-elle fondamentale ?</h2>
+
+    <p class="body-text">
+      La reconnaissance au travail occupe une place centrale dans la construction de la santé psychologique des salariés. Selon les travaux de <strong>Christophe Dejours</strong>, fondateur de la psychodynamique du travail, la non-reconnaissance est l'une des principales sources de souffrance au travail : elle affecte l'identité professionnelle, fragilise la mobilisation subjective et peut conduire à la décompensation psychique.
+    </p>
+
+    <p class="body-text">
+      <strong>Jean-Pierre Brun et Ninon Dugas</strong> (Université Laval) ont montré que le manque de reconnaissance constitue l'un des facteurs de risque psychosocial les plus significatifs, impactant directement la qualité de vie au travail, l'engagement et la rétention des talents. <strong>Christophe Laval</strong> prolonge cette analyse en reliant reconnaissance et engagement durable des collaborateurs.
+    </p>
+
+    <p class="body-text">
+      Pour <strong>Claude Bourcier et Yves Palobart</strong>, la reconnaissance managériale est un levier stratégique de motivation qui, lorsqu'il est bien utilisé, dépasse largement les effets des seules rémunérations matérielles. <strong>St-Onge et al.</strong> ont quant à eux formalisé une approche systémique de la reconnaissance, distinguant ses formes, ses sources et ses effets sur le collectif de travail.
+    </p>
+
+    <p class="body-text">
+      <strong>Christèle Pierre et Christian Jouvenot</strong> nous invitent à ancrer la reconnaissance dans les pratiques managériales quotidiennes : gestes, paroles, rituels, attention portée au travail réel — autant de micro-actes qui construisent ou détruisent un climat de confiance durable.
+    </p>
+
+    <div class="pillar-grid">
+      <div class="pillar-card">
+        <span class="pillar-icon">🔍</span>
+        <p class="pillar-label">Reconnaissance existentielle</p>
+        <p class="pillar-desc">Reconnaître la personne dans son unicité, au-delà de sa fonction</p>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-icon">⚙️</span>
+        <p class="pillar-label">Reconnaissance de la pratique</p>
+        <p class="pillar-desc">Valoriser les méthodes, le savoir-faire, l'investissement professionnel</p>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-icon">🎯</span>
+        <p class="pillar-label">Reconnaissance des résultats</p>
+        <p class="pillar-desc">Souligner les accomplissements, les réussites et la contribution</p>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-icon">🤝</span>
+        <p class="pillar-label">Reconnaissance de l'investissement</p>
+        <p class="pillar-desc">Prendre en compte l'effort consenti, même sans résultat visible</p>
+      </div>
+    </div>
+
+    <p class="body-text">
+      Ce test auto-diagnostic de 20 questions vous propose d'évaluer vos pratiques managériales actuelles en matière de reconnaissance, selon quatre dimensions complémentaires issues de la littérature scientifique. Il est destiné à tout manager souhaitant progresser dans sa posture relationnelle et prévenir les risques psychosociaux dans son équipe.
+    </p>
+
+    <div class="author-block">
+      <p class="author-block-title">Test élaboré d'après les travaux de</p>
+      <ul class="author-list">
+        <li><strong>Christophe Dejours</strong> — Psychodynamique du travail, souffrance et reconnaissance (CNAM)</li>
+        <li><strong>Claude Bourcier & Yves Palobart</strong> — La reconnaissance : un outil de motivation pour le manager</li>
+        <li><strong>Jean-Pierre Brun & Ninon Dugas</strong> — La reconnaissance au travail : une pratique riche de sens (Chaire en gestion de la santé et de la sécurité du travail, Université Laval)</li>
+        <li><strong>St-Onge, Haines, Aubin, Rousseau & Lagassé</strong> — Pour une meilleure reconnaissance des contributions au travail</li>
+        <li><strong>Christèle Pierre & Christian Jouvenot</strong> — Reconnaître les salariés : enjeux et pratiques managériales</li>
+        <li><strong>Christophe Laval</strong> — La reconnaissance en entreprise : du concept aux pratiques</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;">
+      <button class="cta-btn" onclick="showPage('test')">Commencer le test →</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>
+      <strong>Céline CORNET</strong> — Ingénieur pédagogique — <span class="gold">Phosphoria</span><br>
+      Test élaboré d'après les travaux des auteurs cités ci-dessus · Co-construit avec <strong>Claude AI</strong> (Anthropic)<br>
+      <span style="font-size:11px;">Avril 2025 · Usage pédagogique et professionnel · Diffusion libre avec mention des sources</span>
+    </p>
+  </footer>
+</div>
+
+<!-- PAGE 2 : TEST -->
+<div id="page-test" class="page">
+  <div class="content">
+    <div class="test-header">
+      <h2>Auto-diagnostic : mes pratiques de reconnaissance</h2>
+      <p>Répondez spontanément, en pensant à vos comportements habituels avec votre équipe.</p>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <p class="progress-label" id="progress-text">0 / 20 réponses</p>
+
+    <div id="questions-container"></div>
+
+    <div class="submit-area">
+      <button class="submit-btn" id="submit-btn" onclick="submitTest()" disabled>Analyser mes résultats →</button>
+      <p class="unanswered-warn" id="warn-msg">Merci de répondre à toutes les questions avant de valider.</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>
+      <strong>Céline CORNET</strong> — Ingénieur pédagogique — <span class="gold">Phosphoria</span><br>
+      Co-construit avec <strong>Claude AI</strong> · Avril 2025
+    </p>
+  </footer>
+</div>
+
+<!-- PAGE 3 : RÉSULTATS -->
+<div id="page-resultats" class="page">
+  <div class="content">
+    <div class="results-hidden" id="results-placeholder" style="display:block; text-align:center; padding:80px 0;">
+      <p style="color:var(--ink-muted); font-size:15px;">Complétez d'abord le test pour accéder à vos résultats.</p>
+      <button class="cta-btn" onclick="showPage('test')" style="margin-top:20px;">Aller au test →</button>
+    </div>
+    <div id="results-content" style="display:none;"></div>
+  </div>
+
+  <footer class="footer">
+    <p>
+      <strong>Céline CORNET</strong> — Ingénieur pédagogique — <span class="gold">Phosphoria</span><br>
+      Co-construit avec <strong>Claude AI</strong> · Avril 2025
+    </p>
+  </footer>
+</div>
+
+<!-- PAGE 4 : PLAN D'ACTION -->
+<div id="page-actions" class="page">
+  <div class="content">
+    <div class="test-header">
+      <h2>Plan d'action managérial</h2>
+    </div>
+
+    <p class="action-intro">
+      La reconnaissance ne s'improvise pas : elle se construit dans la durée, au travers de pratiques intentionnelles et cohérentes. Ce plan d'action, structuré en trois horizons temporels, s'inspire des recommandations de Pierre & Jouvenot, Brun & Dugas, et Laval pour ancrer durablement la reconnaissance dans votre posture managériale.
+    </p>
+
+    <div class="action-section">
+      <h3 class="action-section-title">
+        <span style="display:inline-block;background:var(--green);color:white;padding:4px 14px;border-radius:100px;font-size:13px;">Court terme</span>
+        Dès cette semaine
+      </h3>
+      <div class="action-cards">
+        <div class="action-card">
+          <div class="action-num">1</div>
+          <div class="action-content">
+            <h4>Pratiquer le retour positif immédiat</h4>
+            <p>Formulez chaque jour au moins un retour positif sincère et spécifique à un membre de votre équipe. Citez un comportement précis, pas une généralité. <em>(Bourcier & Palobart : la reconnaissance doit être immédiate et ciblée pour être efficace.)</em></p>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-num">2</div>
+          <div class="action-content">
+            <h4>Nommer le travail invisible</h4>
+            <p>Identifiez chaque semaine une tâche ou un effort non visible de votre équipe et nommez-le explicitement. Le travail réel est souvent masqué par le résultat — le reconnaître est un acte fort. <em>(Dejours : reconnaître le travail réel, pas seulement le prescrit.)</em></p>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-num">3</div>
+          <div class="action-content">
+            <h4>Ouvrir un espace de parole hebdomadaire</h4>
+            <p>Lors de votre prochain collectif ou entretien individuel, posez la question : "Qu'est-ce qui vous a demandé le plus d'effort cette semaine ?" Écoutez sans évaluer. <em>(Pierre & Jouvenot : l'écoute active est une forme de reconnaissance existentielle.)</em></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-section">
+      <h3 class="action-section-title">
+        <span style="display:inline-block;background:var(--amber);color:white;padding:4px 14px;border-radius:100px;font-size:13px;">Moyen terme</span>
+        Dans les 3 prochains mois
+      </h3>
+      <div class="action-cards">
+        <div class="action-card">
+          <div class="action-num">4</div>
+          <div class="action-content">
+            <h4>Formaliser les moments de reconnaissance</h4>
+            <p>Intégrez un rituel de reconnaissance dans vos réunions d'équipe (partage de réussites, mise en lumière d'une contribution collective). Rendez la reconnaissance prévisible, non aléatoire. <em>(Laval : la régularité renforce l'engagement.)</em></p>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-num">5</div>
+          <div class="action-content">
+            <h4>Individualiser les pratiques de reconnaissance</h4>
+            <p>Chaque collaborateur a un registre de sensibilité différent (public/privé, verbal/écrit, symbolique/matériel). Prenez le temps de connaître les préférences de chacun. <em>(St-Onge et al. : la diversification des formes de reconnaissance augmente son impact.)</em></p>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-num">6</div>
+          <div class="action-content">
+            <h4>Associer les collaborateurs aux décisions qui les concernent</h4>
+            <p>Impliquer les salariés dans les choix organisationnels est une forme puissante de reconnaissance de leurs compétences et de leur jugement professionnel. <em>(Dejours : la coopération est une condition de la santé au travail.)</em></p>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-num">7</div>
+          <div class="action-content">
+            <h4>Travailler sa posture d'écoute active</h4>
+            <p>Développez votre capacité à recevoir les émotions et les difficultés sans jugement ni minimisation. Une formation ou un accompagnement individuel peut y contribuer. <em>(Pierre & Jouvenot : le manager est un espace de contenance émotionnelle.)</em></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-section">
+      <h3 class="action-section-title">
+        <span style="display:inline-block;background:var(--purple);color:white;padding:4px 14px;border-radius:100px;font-size:13px;">Long terme</span>
+        Perspective structurelle
+      </h3>
+      <div class="action-cards">
+        <div class="action-card">
+          <div class="action-num">8</div>
+          <div class="action-content">
+            <h4>Développer une culture de reconnaissance dans l'équipe</h4>
+            <p>Encouragez les reconnaissances latérales (entre pairs) et bottom-up (ascendante). La reconnaissance ne doit pas venir seulement du manager. Créez les conditions d'un écosystème de valorisation mutuelle.</p>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-num">9</div>
+          <div class="action-content">
+            <h4>Intégrer la reconnaissance dans les processus RH</h4>
+            <p>Plaidez pour que la reconnaissance soit intégrée dans les entretiens professionnels, les politiques de mobilité et les systèmes de rémunération de façon cohérente et équitable. <em>(Brun & Dugas : la reconnaissance institutionnelle est un pilier de la prévention des RPS.)</em></p>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-num">10</div>
+          <div class="action-content">
+            <h4>S'auto-évaluer régulièrement</h4>
+            <p>Reprenez ce test dans 6 mois pour mesurer votre progression. La reconnaissance managériale est une compétence qui se développe dans la durée, par la réflexivité et la pratique délibérée.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="author-block" style="margin-top:48px;">
+      <p class="author-block-title">Ressources pour aller plus loin</p>
+      <ul class="author-list">
+        <li>Dejours, C. (1993). <em>Travail, usure mentale.</em> Bayard Éditions</li>
+        <li>Bourcier, C. & Palobart, Y. (1997). <em>La reconnaissance : un outil de motivation pour le manager.</em> Éditions d'Organisation</li>
+        <li>Brun, J.-P. & Dugas, N. (2005). La reconnaissance au travail : une pratique riche de sens. <em>Gestion, 30(2)</em></li>
+        <li>St-Onge, S. et al. (2005). Pour une meilleure reconnaissance des contributions au travail. <em>Gestion, 30(2)</em></li>
+        <li>Pierre, C. & Jouvenot, C. (2006). <em>Reconnaître les salariés.</em> Anact</li>
+        <li>Laval, C. (2011). <em>La reconnaissance en entreprise.</em> Éditions Liaisons</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>
+      <strong>Céline CORNET</strong> — Ingénieur pédagogique — <span class="gold">Phosphoria</span><br>
+      Test élaboré d'après les travaux de Dejours, Bourcier & Palobart, Brun & Dugas, St-Onge et al., Pierre & Jouvenot, Laval<br>
+      Co-construit avec <strong>Claude AI</strong> (Anthropic) · Avril 2025
+    </p>
+  </footer>
+</div>
+
+<script>
+const QUESTIONS = [
+  // D1 : Reconnaissance existentielle (Q1-5)
+  { id: 1, dim: 'd1', dimLabel: 'Reconnaissance existentielle', text: "Je prends régulièrement le temps de m'intéresser à la personne derrière le collaborateur : ses aspirations, ses contraintes, son vécu professionnel." },
+  { id: 2, dim: 'd1', dimLabel: 'Reconnaissance existentielle', text: "Lors d'un entretien ou d'un échange informel, je sais nommer ce que j'apprécie chez un collaborateur en tant qu'individu, au-delà de ses résultats." },
+  { id: 3, dim: 'd1', dimLabel: 'Reconnaissance existentielle', text: "Je salue systématiquement mes collaborateurs en début de journée et manifeste une présence attentive au quotidien." },
+  { id: 4, dim: 'd1', dimLabel: 'Reconnaissance existentielle', text: "Lorsqu'un collaborateur traverse une période difficile (personnelle ou professionnelle), je m'adapte et tiens compte de sa situation." },
+  { id: 5, dim: 'd1', dimLabel: 'Reconnaissance existentielle', text: "Je veille à ce que chaque membre de mon équipe se sente légitime dans son poste et dans sa place au sein du collectif." },
+  // D2 : Reconnaissance de la pratique (Q6-10)
+  { id: 6, dim: 'd2', dimLabel: 'Reconnaissance de la pratique', text: "Je mets en valeur les savoir-faire spécifiques, les expertises et les méthodes de travail de mes collaborateurs." },
+  { id: 7, dim: 'd2', dimLabel: 'Reconnaissance de la pratique', text: "Je souligne les qualités professionnelles d'un collaborateur lorsque l'occasion se présente, y compris en présence de tiers." },
+  { id: 8, dim: 'd2', dimLabel: 'Reconnaissance de la pratique', text: "Je reconnais les efforts déployés par mes collaborateurs même lorsque le résultat n'est pas à la hauteur des attentes." },
+  { id: 9, dim: 'd2', dimLabel: 'Reconnaissance de la pratique', text: "Je sais distinguer et nommer le travail invisible : les adaptations, les régulations, les ressources mobilisées qui ne sont pas toujours visibles dans le résultat final." },
+  { id: 10, dim: 'd2', dimLabel: 'Reconnaissance de la pratique', text: "J'encourage l'initiative, la créativité et la prise de risque raisonnée dans mon équipe, même lorsque cela sort des procédures habituelles." },
+  // D3 : Reconnaissance des résultats (Q11-15)
+  { id: 11, dim: 'd3', dimLabel: 'Reconnaissance des résultats', text: "Je communique régulièrement et clairement les réussites de l'équipe, à la fois en interne et auprès de la hiérarchie." },
+  { id: 12, dim: 'd3', dimLabel: 'Reconnaissance des résultats', text: "Lorsqu'un objectif est atteint, je prends le temps de célébrer la réussite collectivement, pas seulement lors des entretiens annuels." },
+  { id: 13, dim: 'd3', dimLabel: 'Reconnaissance des résultats', text: "Je suis attentif(ve) à attribuer les succès aux bons contributeurs, en évitant tout nivellement ou attribution collective systématique." },
+  { id: 14, dim: 'd3', dimLabel: 'Reconnaissance des résultats', text: "Je veille à ce que la reconnaissance des résultats soit perçue comme juste et équitable par l'ensemble des membres de l'équipe." },
+  { id: 15, dim: 'd3', dimLabel: 'Reconnaissance des résultats', text: "Mes retours positifs sont formulés de manière spécifique et fondés sur des faits observables (et non de façon vague ou générique)." },
+  // D4 : Pratiques de reconnaissance et prévention RPS (Q16-20)
+  { id: 16, dim: 'd4', dimLabel: 'Prévention & pratiques RH', text: "J'intègre la reconnaissance dans mes pratiques managériales quotidiennes, pas seulement lors des entretiens formels ou des évaluations annuelles." },
+  { id: 17, dim: 'd4', dimLabel: 'Prévention & pratiques RH', text: "Je suis conscient(e) que le manque de reconnaissance est un facteur de risque psychosocial et j'en tiens compte dans ma façon de manager." },
+  { id: 18, dim: 'd4', dimLabel: 'Prévention & pratiques RH', text: "J'associe régulièrement mes collaborateurs aux décisions et aux réflexions qui concernent leur travail et leur organisation." },
+  { id: 19, dim: 'd4', dimLabel: 'Prévention & pratiques RH', text: "Je pratique régulièrement la reconnaissance entre pairs : j'encourage et je facilite les reconnaissances mutuelles au sein de l'équipe." },
+  { id: 20, dim: 'd4', dimLabel: 'Prévention & pratiques RH', text: "Je me remets en question sur mes pratiques de reconnaissance et je cherche à les améliorer, notamment en m'appuyant sur des retours ou des formations." }
+];
+
+const answers = {};
+
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  QUESTIONS.forEach(q => {
+    const dimColor = q.dim;
+    const dimMap = { d1: 'Dimension 1', d2: 'Dimension 2', d3: 'Dimension 3', d4: 'Dimension 4' };
+    container.innerHTML += `
+      <div class="q-card" id="qcard-${q.id}">
+        <p class="q-number">${dimMap[q.dim]} — ${q.dimLabel}</p>
+        <span class="dimension-badge ${dimColor}">${q.dimLabel}</span>
+        <p class="q-text">${q.id}. ${q.text}</p>
+        <div class="likert-scale-wrap">
+          <div class="likert-labels"><span>Jamais</span><span>Rarement</span><span>Parfois</span><span>Souvent</span><span>Toujours</span></div>
+          <div class="likert">
+            ${[1,2,3,4,5].map(v => `<button class="likert-btn" id="q${q.id}-v${v}" onclick="selectAnswer(${q.id}, ${v})">${v}</button>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function selectAnswer(qId, val) {
+  answers[qId] = val;
+  [1,2,3,4,5].forEach(v => {
+    const btn = document.getElementById(`q${qId}-v${v}`);
+    btn.classList.toggle('selected', v === val);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const count = Object.keys(answers).length;
+  const pct = Math.round(count / 20 * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = count + ' / 20 réponses';
+  document.getElementById('submit-btn').disabled = count < 20;
+}
+
+function submitTest() {
+  if (Object.keys(answers).length < 20) {
+    document.getElementById('warn-msg').style.display = 'block';
+    return;
+  }
+  document.getElementById('warn-msg').style.display = 'none';
+  computeResults();
+  showPage('resultats');
+}
+
+function computeResults() {
+  const dims = { d1: [], d2: [], d3: [], d4: [] };
+  QUESTIONS.forEach(q => { dims[q.dim].push(answers[q.id]); });
+  const scores = {};
+  let total = 0;
+  Object.keys(dims).forEach(d => {
+    const s = dims[d].reduce((a, b) => a + b, 0);
+    scores[d] = s;
+    total += s;
+  });
+
+  const pct = (s, max) => Math.round(s / max * 100);
+
+  let profile, profileClass, profileDesc, profileColor;
+  if (total <= 40) {
+    profile = 'Manager en éveil'; profileClass = 'prof-debutant'; profileColor = '#C47A1E';
+    profileDesc = `Vos pratiques de reconnaissance sont encore peu développées ou peu systématiques. C'est souvent le cas des managers qui ont été formés sur des critères de performance et d'efficacité, sans que la dimension relationnelle ait été valorisée. Il n'y a pas de jugement ici : la reconnaissance est une compétence qui s'apprend. La prise de conscience que vous effectuez aujourd'hui est déjà une première étape essentielle. Inspirez-vous des travaux de Brun & Dugas pour comprendre l'impact concret du manque de reconnaissance sur vos équipes, et commencez par de petits gestes quotidiens.`;
+  } else if (total <= 60) {
+    profile = 'Manager en développement'; profileClass = 'prof-developp'; profileColor = '#185FA5';
+    profileDesc = `Vous avez une sensibilité à la reconnaissance et des pratiques émergentes, mais celles-ci restent inégales selon les situations ou les personnes. Vous reconnaissez volontiers les résultats, mais peut-être moins le travail invisible, les efforts non aboutis ou les personnes dans leur dimension existentielle. C'est un stade clé : vous avez les fondations, il s'agit maintenant de renforcer la cohérence et la régularité de vos pratiques. Les travaux de Pierre & Jouvenot vous aideront à ancrer des rituels de reconnaissance dans votre quotidien managérial.`;
+  } else if (total <= 80) {
+    profile = 'Manager confiant'; profileClass = 'prof-confiant'; profileColor = '#2D7D5A';
+    profileDesc = `Vos pratiques de reconnaissance sont solides et plurielles. Vous savez valoriser les personnes, les compétences et les résultats, et vous êtes attentif(ve) aux dimensions relationnelles de votre rôle. Vous connaissez l'importance de la reconnaissance pour la santé au travail et vous agissez en ce sens. Pour aller plus loin, travaillez l'individualisation de vos pratiques (chaque collaborateur a un registre différent), et renforcez la dimension collective et latérale de la reconnaissance. Vous êtes un appui précieux pour prévenir les risques psychosociaux.`;
+  } else {
+    profile = 'Manager exemplaire'; profileClass = 'prof-exemplaire'; profileColor = '#8C6D1F';
+    profileDesc = `Votre culture de la reconnaissance est remarquablement développée. Vous incarnez une approche managériale où la personne, le travail réel et l'engagement sont au cœur de votre posture. Vous êtes un modèle potentiel pour votre organisation, et un facteur de protection fort contre les risques psychosociaux dans votre équipe. Continuez à développer la reconnaissance entre pairs, à impliquer vos collaborateurs dans les décisions, et à partager vos pratiques avec d'autres managers. Votre leadership contribue à construire une culture organisationnelle saine et durable.`;
+  }
+
+  const dimLabels = {
+    d1: 'Reconnaissance existentielle',
+    d2: 'Reconnaissance de la pratique',
+    d3: 'Reconnaissance des résultats',
+    d4: 'Prévention & pratiques RH'
+  };
+
+  const dimInterp = (s) => {
+    if (s <= 10) return 'Axe à renforcer en priorité.';
+    if (s <= 15) return 'Pratiques émergentes — à consolider.';
+    if (s <= 20) return 'Pratiques solides — à maintenir et approfondir.';
+    return 'Axe très développé — partagez vos pratiques !';
+  };
+
+  const dimBarColor = { d1: 'bar-d1', d2: 'bar-d2', d3: 'bar-d3', d4: 'bar-d4' };
+
+  let dimCardsHTML = Object.keys(scores).map(d => `
+    <div class="dim-card">
+      <div class="dim-card-header">
+        <p class="dim-card-title">${dimLabels[d]}</p>
+        <span class="dim-score-label">${scores[d]}/25</span>
+      </div>
+      <div class="dim-bar-bg"><div class="dim-bar-fill ${dimBarColor[d]}" style="width:${pct(scores[d],25)}%"></div></div>
+      <p class="dim-interpretation">${dimInterp(scores[d])}</p>
+    </div>`).join('');
+
+  document.getElementById('results-placeholder').style.display = 'none';
+  document.getElementById('results-content').style.display = 'block';
+  document.getElementById('results-content').innerHTML = `
+    <div class="score-hero">
+      <div class="score-number">${total}<span class="score-max">/100</span></div>
+      <span class="profile-badge ${profileClass}">${profile}</span>
+      <p class="profile-name">${profile}</p>
+    </div>
+
+    <h2 class="section-title">Résultats par dimension</h2>
+    <div class="dim-results">${dimCardsHTML}</div>
+
+    <div class="profile-desc">
+      <h3>Lecture de votre profil : ${profile}</h3>
+      <p>${profileDesc}</p>
+    </div>
+
+    <div style="text-align:center; margin-top:32px;">
+      <button class="cta-btn" onclick="showPage('actions')">Voir mon plan d'action →</button>
+      <br>
+      <span class="reset-link" onclick="resetTest()">Recommencer le test</span>
+    </div>
+  `;
+}
+
+function resetTest() {
+  Object.keys(answers).forEach(k => delete answers[k]);
+  renderQuestions();
+  updateProgress();
+  document.getElementById('results-placeholder').style.display = 'block';
+  document.getElementById('results-content').style.display = 'none';
+  showPage('test');
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t, i) => {
+    const pages = ['accueil','test','resultats','actions'];
+    t.classList.toggle('active', pages[i] === id);
+  });
+  window.scrollTo(0, 0);
+}
+
+renderQuestions();
+</script>
+</body>
+</html>
